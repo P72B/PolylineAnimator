@@ -63,6 +63,7 @@ class AnimatedPolyline(
     }
 
     fun remove() {
+        animator.cancel()
         renderedPolyline?.remove()
     }
 
