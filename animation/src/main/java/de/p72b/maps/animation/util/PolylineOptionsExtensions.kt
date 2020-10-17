@@ -14,6 +14,7 @@ object PolylineOptionsExtensions {
     fun PolylineOptions.copyPolylineOptions(): PolylineOptions {
         return PolylineOptions()
             .color(this.color)
+            .width(this.width)
             .startCap(this.startCap)
             .endCap(this.endCap)
             .clickable(this.isClickable)
