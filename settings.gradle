@@ -1,0 +1,3 @@
+include ':animation'
+include ':app'
+rootProject.name = "Polyline Animator"
