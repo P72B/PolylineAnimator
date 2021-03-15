@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.view.animation.DecelerateInterpolator
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -40,6 +41,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        findViewById<Button>(R.id.clear).setOnClickListener {
+            clearAnimation()
+        }
+        findViewById<Button>(R.id.start).setOnClickListener {
+            animatedPolyline.start()
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -57,6 +64,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             animatorListenerAdapter = getListener()
         )
         animatedPolyline.startWithDelay(1000)
+    }
+
+    private fun clearAnimation() {
+        animatedPolyline.remove()
     }
 
     private fun getListener(): AnimatorListenerAdapter {
