@@ -20,39 +20,37 @@ class AnimatedPolyline(
     private var polylineOptions: PolylineOptions = PolylineOptions(),
     duration: Long = 3000,
     interpolator: TimeInterpolator? = null,
-    animatorListenerAdapter: AnimatorListenerAdapter? = null
-) {
+    private val animatorListenerAdapter: AnimatorListenerAdapter? = null
+) : ValueAnimator.AnimatorUpdateListener {
     private var renderedPolyline: Polyline? = null
     private val legs: List<Double> = CalculationHelper.calculateLegsLengths(points)
-    private var totalPathDistance: Double
-    private var animator: ValueAnimator
+    private var totalPathDistance: Double = legs.sum()
+    private var animator: ValueAnimator = ValueAnimator.ofFloat(0f, 100f)
 
     init {
-        totalPathDistance = legs.sum()
-
-        animator = ValueAnimator.ofFloat(0f, 100f)
         animator.duration = duration
-                interpolator?.let {
-                    animator.interpolator = it
-                }
-        animator.addUpdateListener { valueAnimator ->
-            val fraction = valueAnimator.animatedValue as Float
-            val pathSection = totalPathDistance * fraction / 100
-            renderPolylineOnMap(
-                CalculationHelper.polylineUntilSection(
-                    points, legs, pathSection, polylineOptions.copyPolylineOptions()))
+        interpolator?.let {
+            animator.interpolator = it
         }
+        animator.addUpdateListener(this)
         animatorListenerAdapter?.let {
             animator.addListener(it)
         }
     }
 
     fun replacePoints(pointList: List<LatLng>) {
+        points = pointList
         val polylineOptions = polylineOptions.toPolylineOptions(pointList)
         renderPolylineOnMap(polylineOptions)
     }
 
     fun start() {
+        animatorListenerAdapter?.let {
+            if (animator.listeners == null || !animator.listeners.contains(it)) {
+                animator.addListener(it)
+                animator.addUpdateListener(this)
+            }
+        }
         animator.start()
     }
 
@@ -63,6 +61,10 @@ class AnimatedPolyline(
     }
 
     fun remove() {
+        animator.removeUpdateListener(this)
+        animatorListenerAdapter?.let {
+            animator.removeListener(it)
+        }
         animator.cancel()
         renderedPolyline?.remove()
     }
@@ -71,5 +73,15 @@ class AnimatedPolyline(
         val newPolyline = map.addPolyline(polylineOptions)
         renderedPolyline?.remove()
         renderedPolyline = newPolyline
+    }
+
+    override fun onAnimationUpdate(animation: ValueAnimator?) {
+        val fraction = animator.animatedValue as Float
+        val pathSection = totalPathDistance * fraction / 100
+        renderPolylineOnMap(
+            CalculationHelper.polylineUntilSection(
+                points, legs, pathSection, polylineOptions.copyPolylineOptions()
+            )
+        )
     }
 }
