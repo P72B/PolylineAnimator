@@ -23,8 +23,8 @@ class AnimatedPolyline(
     private val animatorListenerAdapter: AnimatorListenerAdapter? = null
 ) : ValueAnimator.AnimatorUpdateListener {
     private var renderedPolyline: Polyline? = null
-    private val legs: List<Double> = CalculationHelper.calculateLegsLengths(points)
-    private var totalPathDistance: Double = legs.sum()
+    private lateinit var legs: List<Double>
+    private var totalPathDistance: Double = 0.0
     private var animator: ValueAnimator = ValueAnimator.ofFloat(0f, 100f)
 
     init {
@@ -45,6 +45,8 @@ class AnimatedPolyline(
     }
 
     fun start() {
+        legs = CalculationHelper.calculateLegsLengths(points)
+        totalPathDistance = legs.sum()
         animatorListenerAdapter?.let {
             if (animator.listeners == null || !animator.listeners.contains(it)) {
                 animator.addListener(it)
