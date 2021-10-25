@@ -23,7 +23,7 @@ class AnimatedPolyline(
     private val animatorListenerAdapter: AnimatorListenerAdapter? = null
 ) : ValueAnimator.AnimatorUpdateListener {
     private var renderedPolyline: Polyline? = null
-    private val legs: List<Double> = CalculationHelper.calculateLegsLengths(points)
+    private var legs: List<Double> = CalculationHelper.calculateLegsLengths(points)
     private var totalPathDistance: Double = legs.sum()
     private var animator: ValueAnimator = ValueAnimator.ofFloat(0f, 100f)
 
@@ -41,6 +41,8 @@ class AnimatedPolyline(
     fun replacePoints(pointList: List<LatLng>) {
         points = pointList
         val polylineOptions = polylineOptions.toPolylineOptions(pointList)
+        legs = CalculationHelper.calculateLegsLengths(points)
+        totalPathDistance = legs.sum()
         renderPolylineOnMap(polylineOptions)
     }
 
