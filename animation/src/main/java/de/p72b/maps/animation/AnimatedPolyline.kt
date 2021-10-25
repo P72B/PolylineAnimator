@@ -41,6 +41,8 @@ class AnimatedPolyline(
     fun replacePoints(pointList: List<LatLng>) {
         points = pointList
         val polylineOptions = polylineOptions.toPolylineOptions(pointList)
+        legs = CalculationHelper.calculateLegsLengths(points)
+        totalPathDistance = legs.sum()
         renderPolylineOnMap(polylineOptions)
     }
 
