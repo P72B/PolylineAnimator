@@ -5,6 +5,8 @@ Android google maps polyline animator
 
 A library that will provide an animated polyline object.
 
+There is a [medium article](https://p72b.medium.com/polyline-animation-5decc9e964d4) explaining the algorithm implementation available.
+
 ## Import
 
 1. Add it in your root build.gradle at the end of repositories:
